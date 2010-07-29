@@ -1,3 +1,5 @@
+#Licensed under the GNU GPL v3 License.
+#By bikcmp
 import os
 import flask
 from flask import Flask, request, redirect, url_for, abort, session, escape
@@ -47,6 +49,7 @@ def do_upload():
 	if request.method == 'POST':
 		file = request.files['file']
 		if 'username' in session:
+			uploader=escape(session['username'])
 			if file: #and allowed_file(file.filename):
 				filename = secure_filename(file.filename)
 				file.save(os.path.join(UPLOAD_FOLDER, str(vidid)))
@@ -59,7 +62,8 @@ def do_upload():
                 sleep(1)
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
+                #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
+				freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader)
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
