@@ -2,4 +2,6 @@
 
   * Allow users to create accounts
   * My video's page.
-  * Upload status/conversion status
+  * Upload status/conversion status on 'my video' page.
+  * URL for user (blah.com/bikcmp) listing videos.
+  * Comments
