@@ -15,6 +15,9 @@ UPLOAD_FOLDER = '/home/jason/fossvideo/temp/'
 STATIC_FOLDER = "/home/jason/fossvideo/static/"
 VIDEO_FOLDER = "/home/jason/fossvideo/video/"
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']) #Not really used...yet.
+#Make sure to make a blank file named "users" (touch users)
+#Add users by manually editing the 'users' file, and make users each on a seperate line, with the format USERNAME PASSWORD.
+DATABASE_FOLDER = "/home/jason/fossvideo/db/"
 
 app = Flask(__name__)
 def allowed_file(filename):
@@ -92,21 +95,23 @@ def rawvideo(raw_file):
 		return fread
 	except IOError:
 		abort(404)#, "File/video not found.")
-	
-#logins (added by bikcmp, Jul 29, 2010)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
-        #return redirect(url_for('index'))
-        return "You are now logged in."
-    return '''
-        <form action="" method="post">
-            <p><input type=text name=username>
-            <p><input type=submit value=Login>
-        </form>
-    '''
+        username = session['username']
+        password=request.form['password']
+        handle=open(DATABASE_FOLDER+'users','r')
+        for line in handle.readlines():
+			if line.find(username+' ')!=-1:
+				realpassword=line.split()[1].strip('\r\n')
+				if realpassword == password:
+					return "You are now logged in."
+				elif realpassword != password:
+					return "Login failed."
 	
+
 @app.route('/logout')
 def logout():
     # remove the username from the session if its there
