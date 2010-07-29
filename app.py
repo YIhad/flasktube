@@ -1,6 +1,6 @@
 import os
 import flask
-from flask import Flask, request, redirect, url_for, abort, session
+from flask import Flask, request, redirect, url_for, abort, session, escape
 from werkzeug import secure_filename
 #import bottle
 #from bottle import route, run, redirect, abort, request
@@ -75,7 +75,7 @@ def play_video(vidid):
 		f = open(STATIC_FOLDER+vidid+".html", 'r')
 		fread=f.read()
 		#return template('default', content=fread)
-		return fread+"<br></br><p>Submitted by: "+username+"</p>"
+		return fread#+"<br></br><p>Submitted by: "+username+"</p>"
 	except IOError:
 	#	abort(404, "File not found.")
 		abort(404)
