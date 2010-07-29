@@ -10,7 +10,9 @@ import subprocess
 ip_address="192.168.1.13"
 maintmode="0"
 UPLOAD_FOLDER = '/home/jason/fossvideo/temp/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+STATIC_FOLDER = "/home/jason/fossvideo/static/"
+VIDEO_FOLDER = "/home/jason/fossvideo/video/"
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']) #Not really used...yet.
 
 app = Flask(__name__)
 def allowed_file(filename):
@@ -65,15 +67,15 @@ def do_upload():
 	#f.write(datafile.file.read())
 	#f.close()
             
-              	subprocess.Popen(["/usr/bin/ffmpeg", "-i", str(vidid), "/home/jason/fossvideo/video/"+str(vidid)+".flv"], cwd="/home/jason/fossvideo/temp/")
+              	subprocess.Popen(["/usr/bin/ffmpeg", "-i", str(vidid), VIDEO_FOLDER+str(vidid)+".flv"], cwd=UPLOAD_FOLDER)
                 print "Converted video"
-                subprocess.Popen(["/bin/cp", "/home/jason/fossvideo/static/default.html", '/home/jason/fossvideo/static/'+str(vidid)+".html.tmp"], cwd="/home/jason/fossvideo/static/")
+                subprocess.Popen(["/bin/cp", STATIC_FOLDER+"default.html", STATIC_FOLDER+str(vidid)+".html.tmp"], cwd=STATIC_FOLDER)
                 sleep(1)
-                f = open('/home/jason/fossvideo/static/'+str(vidid)+'.html.tmp', 'r')
+                f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv")
                 f.close()
-                f = open('/home/jason/fossvideo/static/'+str(vidid)+'.html', 'w')
+                f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
                 f.close()
                 return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':5000/video/'+str(vidid)+'">http://'+ip_address+':5000/video/'+str(vidid)+'</A>'
@@ -84,17 +86,17 @@ def do_upload():
 @app.route('/video/<vidid>')
 def play_video(vidid):
 	try:
-		f = open('/home/jason/fossvideo/static/'+vidid+".html", 'r')
+		f = open(STATIC_FOLDER'+vidid+".html", 'r')
 		fread=f.read()
 		#return template('default', content=fread)
-		return fread#+"<br></br><p>Submitted by: "+user+"</p>"
+		return fread+"<br></br><p>Submitted by: "+username+"</p>"
 	except IOError:
 	#	abort(404, "File not found.")
 		abort(404)
 @app.route('/raw_video/<raw_file>')
 def rawvideo(raw_file):
 	try:
-		f = open('/home/jason/fossvideo/video/'+raw_file, 'r')
+		f = open(VIDEO_FOLDER+raw_file, 'r')
 		fread=f.read()
 		#return template('default', content=fread)
 		return fread
