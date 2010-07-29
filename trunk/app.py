@@ -86,7 +86,7 @@ def do_upload():
 @app.route('/video/<vidid>')
 def play_video(vidid):
 	try:
-		f = open(STATIC_FOLDER'+vidid+".html", 'r')
+		f = open(STATIC_FOLDER+vidid+".html", 'r')
 		fread=f.read()
 		#return template('default', content=fread)
 		return fread+"<br></br><p>Submitted by: "+username+"</p>"
