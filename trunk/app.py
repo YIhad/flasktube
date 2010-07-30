@@ -1,4 +1,4 @@
-#Licensed under the GNU GPL v3 License.
+#This code is licensed under the GNU GPL v3 License.
 #By bikcmp
 import os
 import flask
@@ -66,7 +66,7 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-				freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader)
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader)
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
@@ -96,20 +96,34 @@ def rawvideo(raw_file):
 	except IOError:
 		abort(404)#, "File/video not found.")
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET'])#, 'POST'])
 def login():
-    if request.method == 'POST':
-        session['username'] = request.form['username']
-        username = session['username']
-        password=request.form['password']
-        handle=open(DATABASE_FOLDER+'users','r')
-        for line in handle.readlines():
-			if line.find(username+' ')!=-1:
-				realpassword=line.split()[1].strip('\r\n')
-				if realpassword == password:
-					return "You are now logged in."
-				elif realpassword != password:
-					return "Login failed."
+	#if request.method == 'GET':
+		return '''
+        <form action="/do/login" method="post">
+            <p><input type=text name=username>
+            <input type="password" name=password>
+            <p><input type=submit value=Login>
+        </form>
+    '''
+	
+@app.route('/do/login', methods=['POST'])
+def do_login():
+	#if request.method == 'POST': Not needed because of methods=
+			session['username'] = request.form['username']
+			username = session['username']
+			password=request.form['password']
+			handle=open(DATABASE_FOLDER+'users','r')
+			for line in handle.readlines():
+				if line.find(username+' ')!=-1:
+					realpassword=line.split()[1].strip('\r\n')
+					if realpassword == password:
+						return "You are now logged in."
+					elif realpassword != password:
+						return "Login failed."
+					else:
+						return abort(500)
+			return abort(500)
 	
 
 @app.route('/logout')
@@ -118,6 +132,26 @@ def logout():
     session.pop('username', None)
     #return redirect(url_for('index'))
     return "You are now logged out."
+ 
+@app.route('/createAccount', methods=['GET', 'POST'])
+def createAccount():
+	if request.method == 'POST':
+		#username = session['username']
+		createUser = request.form['username']
+		createPassword = request.form['password']
+		password=request.form['password']
+		f=open(DATABASE_FOLDER+'users','a')
+		f.write(createUser+" "+createPassword+"\n")
+		f.close()
+		return "User sucessfully added."
+	#return '''
+	return '''
+        <form action="/createAccount" method="post">
+            <p><input type=text name=username>
+            <input type="password" name=password>
+            <p><input type=submit value=Login>
+        </form>
+    '''
 
 
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
