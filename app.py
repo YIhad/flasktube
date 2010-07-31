@@ -79,33 +79,36 @@ def do_upload():
 
 @app.route('/video/<vidid>')
 def play_video(vidid):
-		f = open(STATIC_FOLDER+vidid+".html", 'r')
-		fread=f.read()
+		try:
+			f = open(STATIC_FOLDER+vidid+".html", 'r')
+			fread=f.read()
 		#fi = open(DATABASE_FOLDER+'comments','r')
 		#return template('default', content=fread)
 		#vidcomments = fi.read()
-		handle=open(DATABASE_FOLDER+'comments','r')
-		#rawcomment=handle.read()
+			handle=open(DATABASE_FOLDER+'comments','r')
+			#rawcomment=handle.read()
 		#print handle.read()
-		var = ""
-		for line in handle.readlines():
-			#var="
-			if line.find(vidid+' ')!=-1:
-				comment=" ".join(line.split()[2:]).strip('\r\n')
-				print comment
-				handle.close()
+			var = ""
+			for line in handle.readlines():
+				#var="
+				if line.find(vidid+' ')!=-1:
+					comment=" ".join(line.split()[2:]).strip('\r\n')
+					print comment
+					handle.close()
 				#fread2=fread.replace("\r\n", "")
-				comment_username = "".join(line.split()[1]).strip('\r\n')
-				var+="<br></br><b>"+comment_username+"</b> <p>  </p>"+comment
-		return fread+"<br></br>Comments: "+var
+					comment_username = "".join(line.split()[1]).strip('\r\n')
+					var+="<br></br><b>"+comment_username+"</b> <p>  </p>"+comment
+			return fread+"<br></br>Comments: "+var
+			
+			
 		#print "Falling back to no comment detected page!"
 		#return fread
 		#return fread+raw
 		#.close()
 		#comment=vidcomments.replace(vidid, "<br>")
 				
-	#except IOError:
-	#	abort(404, "File not found.")
+		except IOError:
+			abort(404)
 		#abort(404)
 @app.route('/raw_video/<raw_file>')
 def rawvideo(raw_file):
