@@ -8,7 +8,6 @@ from werkzeug import secure_filename
 #from bottle import route, run, redirect, abort, request
 from time import time, sleep
 import subprocess
-import re
 #import bikcmpdb
 ip_address="192.168.1.14"
 maintmode="0"
