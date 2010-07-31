@@ -194,16 +194,10 @@ def addComment():
 		return redirect(url_for('login'))
 	elif request.method == 'GET':
 		return abort(404)
-@app.route('/debug/comment')
-def show_comment():
-	handle=open(DATABASE_FOLDER+'comments','r')
-	for line in handle.readlines():
-				if line.find('1280552091'+' ')!=-1:
-					comment=line.split()[1].strip('\r\n')
-					return comment
+
 					
 	#debugcomment=f.read()
 	f.close()
 	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
-app.run(debug=True,host='0.0.0.0')
+app.run(debug=False,host='0.0.0.0')
