@@ -8,6 +8,7 @@ from werkzeug import secure_filename
 #from bottle import route, run, redirect, abort, request
 from time import time, sleep
 import subprocess
+import re
 #import bikcmpdb
 ip_address="192.168.1.14"
 maintmode="0"
@@ -79,14 +80,34 @@ def do_upload():
 
 @app.route('/video/<vidid>')
 def play_video(vidid):
-	try:
 		f = open(STATIC_FOLDER+vidid+".html", 'r')
 		fread=f.read()
+		#fi = open(DATABASE_FOLDER+'comments','r')
 		#return template('default', content=fread)
-		return fread#+"<br></br><p>Submitted by: "+username+"</p>"
-	except IOError:
+		#vidcomments = fi.read()
+		handle=open(DATABASE_FOLDER+'comments','r')
+		#rawcomment=handle.read()
+		#print handle.read()
+		var = ""
+		for line in handle.readlines():
+			#var="
+			if line.find(vidid+' ')!=-1:
+				comment=" ".join(line.split()[2:]).strip('\r\n')
+				print comment
+				handle.close()
+				#fread2=fread.replace("\r\n", "")
+				comment_username = "".join(line.split()[1]).strip('\r\n')
+				var+="<br></br><b>"+comment_username+"</b> <p>  </p>"+comment
+		return fread+"<br></br>Comments: "+var
+		#print "Falling back to no comment detected page!"
+		#return fread
+		#return fread+raw
+		#.close()
+		#comment=vidcomments.replace(vidid, "<br>")
+				
+	#except IOError:
 	#	abort(404, "File not found.")
-		abort(404)
+		#abort(404)
 @app.route('/raw_video/<raw_file>')
 def rawvideo(raw_file):
 	try:
@@ -102,7 +123,10 @@ def login():
 	#if request.method == 'GET':
 		return '''
         <form action="/do/login" method="post">
-            <p><input type=text name=username>
+            <p>
+            <p>Username</p><input type=text name=username>
+            <br>
+            <p>Password</p>
             <input type="password" name=password>
             <p><input type=submit value=Login>
         </form>
@@ -156,16 +180,28 @@ def createAccount():
 @app.route('/addComment', methods=['POST'])
 def addComment():
 	if request.method == 'POST':
-		#username = session['username']
-		commentVid = request.form['vidid']
-		commentComments=request.form['comments']
-		f=open(DATABASE_FOLDER+'comments','a')
-		print commentVid+" "+commentComments
-		#print commentComments
-		f.write(commentVid+" "+commentComments+"\r\n")
-		f.close()
-		return "Added comment."
+		if 'username' in session:
+			username = session['username']
+			commentVid = request.form['vidid']
+			commentComments=request.form['comments']
+			f=open(DATABASE_FOLDER+'comments','a')
+			print username+" "+commentVid+" "+commentComments
+			f.write(commentVid+ " "+username+" "+commentComments+"\n")
+			f.close()
+			return "Added comment."
+		return redirect(url_for('login'))
 	elif request.method == 'GET':
 		return abort(404)
+@app.route('/debug/comment')
+def show_comment():
+	handle=open(DATABASE_FOLDER+'comments','r')
+	for line in handle.readlines():
+				if line.find('1280552091'+' ')!=-1:
+					comment=line.split()[1].strip('\r\n')
+					return comment
+					
+	#debugcomment=f.read()
+	f.close()
+	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
 app.run(debug=True,host='0.0.0.0')
