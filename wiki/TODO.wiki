@@ -4,4 +4,4 @@
   * My video's page.
   * Upload status/conversion status on 'my video' page.
   * URL for user (blah.com/bikcmp) listing videos.
-  [DONE on Jul 31 2010(Thanks Gryllida!)] Comments (I'll do this -bikcmp) 
+  DONE on Jul 31 2010(Thanks Gryllida!) * Comments (I'll do this -bikcmp) 
