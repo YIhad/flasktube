@@ -41,7 +41,8 @@ def upload():
 		<input type=submit value=Upload>
 		</form>
 		'''
-	return "Please login."
+	#return "Please login."
+	return redirect(url_for('login'))
 @app.route('/do/upload', methods=['POST'])
 def do_upload():
 	vidid=int(time())
