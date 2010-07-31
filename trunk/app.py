@@ -9,13 +9,13 @@ from werkzeug import secure_filename
 from time import time, sleep
 import subprocess
 #import bikcmpdb
-ip_address="192.168.1.13"
+ip_address="192.168.1.14"
 maintmode="0"
 UPLOAD_FOLDER = '/home/jason/fossvideo/temp/'
 STATIC_FOLDER = "/home/jason/fossvideo/static/"
 VIDEO_FOLDER = "/home/jason/fossvideo/video/"
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']) #Not really used...yet.
-#Make sure to make a blank file named "users" (touch users)
+#Make sure to make a blank file named "users", and "comments" (touch users and touch comments)
 #Add users by manually editing the 'users' file, and make users each on a seperate line, with the format USERNAME PASSWORD.
 DATABASE_FOLDER = "/home/jason/fossvideo/db/"
 
@@ -50,6 +50,7 @@ def do_upload():
 	
 	#if maintmode == "0":
 	if request.method == 'POST':
+		comid=vidid
 		file = request.files['file']
 		if 'username' in session:
 			uploader=escape(session['username'])
@@ -66,7 +67,7 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader)
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader).replace('replacecommentid',str(vidid))
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
@@ -152,7 +153,19 @@ def createAccount():
             <p><input type=submit value=Login>
         </form>
     '''
-
-
+@app.route('/addComment', methods=['POST'])
+def addComment():
+	if request.method == 'POST':
+		#username = session['username']
+		commentVid = request.form['vidid']
+		commentComments=request.form['comments']
+		f=open(DATABASE_FOLDER+'comments','a')
+		print commentVid+" "+commentComments
+		#print commentComments
+		f.write(commentVid+" "+commentComments+"\r\n")
+		f.close()
+		return "Added comment."
+	elif request.method == 'GET':
+		return abort(404)
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
 app.run(debug=True,host='0.0.0.0')
