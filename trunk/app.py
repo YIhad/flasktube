@@ -10,7 +10,8 @@ from time import time, sleep
 import subprocess
 #import bikcmpdb
 ip_address="192.168.1.14"
-maintmode="0"
+PORT = 5000
+HOST = "0.0.0.0"
 UPLOAD_FOLDER = '/home/jason/fossvideo/temp/'
 STATIC_FOLDER = "/home/jason/fossvideo/static/"
 VIDEO_FOLDER = "/home/jason/fossvideo/video/"
@@ -66,13 +67,13 @@ def do_upload():
                 sleep(1)
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
-                #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":5000/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader).replace('replacecommentid',str(vidid))
+                #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader).replace('replacecommentid',str(vidid))
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
                 f.close()
-                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':5000/video/'+str(vidid)+'">http://'+ip_address+':5000/video/'+str(vidid)+'</A>'
+                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':PORT/video/'+str(vidid)+'">http://'+ip_address+':PORT/video/'+str(vidid)+'</A>'
         else:
 			return "You are not logged in."
             #return "OK"
@@ -200,4 +201,4 @@ def addComment():
 	f.close()
 	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
-app.run(debug=False,host='0.0.0.0')
+app.run(debug=False,host=HOST,port=PORT)
