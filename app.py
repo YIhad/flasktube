@@ -69,7 +69,7 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploadeduser',uploader).replace('replacecommentid',str(vidid))
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',uploader).replace('replacecommentid',str(vidid))
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
