@@ -178,7 +178,8 @@ def createAccount():
 		f=open(DATABASE_FOLDER+'users','a')
 		f.write(createUser+" "+createPassword+"\n")
 		f.close()
-		return "User sucessfully added."
+		#return "User sucessfully added."
+		return redirect(url_for('login'))
 	#return '''
 	return '''
         <form action="/createAccount" method="post">
