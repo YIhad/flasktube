@@ -74,10 +74,14 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
                 f.close()
-                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':PORT/video/'+str(vidid)+'">http://'+ip_address+':PORT/video/'+str(vidid)+'</A>'
+                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':'+PORT+'/video/'+str(vidid)+'">http://'+ip_address+':'+PORT+'/video/'+str(vidid)+'</A>'
         else:
-			return "You are not logged in."
+			return redirect(url_for('upload'))
+			#return "You are not logged in."
             #return "OK"
+#@app.route('/bin/redir/<url>')
+#def do_redir(url):
+	    #return redirect('http://'+ip_address+':'+port+'/'+url)
 
 @app.route('/video/<vidid>')
 def play_video(vidid):
@@ -147,9 +151,10 @@ def do_login():
 				if line.find(username+' ')!=-1:
 					realpassword=line.split()[1].strip('\r\n')
 					if realpassword == password:
-						return "You are now logged in."
+						#return "You are now logged in."
+						return redirect(url_for('upload'))
 					elif realpassword != password:
-						return "Login failed."
+						return "Login failed.<br>"
 					else:
 						return abort(500)
 			return abort(500)
@@ -202,4 +207,4 @@ def addComment():
 	f.close()
 	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
-app.run(debug=False,host=HOST,port=PORT)
+app.run(debug=True,host=HOST,port=PORT)
