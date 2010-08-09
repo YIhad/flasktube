@@ -69,12 +69,12 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',uploader).replace('replacecommentid',str(vidid))
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":"+str(PORT)+"/raw_video/"+str(vidid)+".flv").replace('uploaderuser',uploader).replace('replacecommentid',str(vidid))
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
                 f.close()
-                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':'+PORT+'/video/'+str(vidid)+'">http://'+ip_address+':'+PORT+'/video/'+str(vidid)+'</A>'
+                return 'Video uploaded sucessfully.</br></br>Your video is at: <A HREF="http://'+ip_address+':'+str(PORT)+'/video/'+str(vidid)+'">http://'+ip_address+':'+str(PORT)+'/video/'+str(vidid)+'</A>'
         else:
 			return redirect(url_for('upload'))
 			#return "You are not logged in."
@@ -154,7 +154,8 @@ def do_login():
 						#return "You are now logged in."
 						return redirect(url_for('upload'))
 					elif realpassword != password:
-						return "Login failed.<br>"
+						#return "Login failed.<br>"
+						return redirect(url_for('login'))
 					else:
 						return abort(500)
 			return abort(500)
@@ -207,4 +208,4 @@ def addComment():
 	f.close()
 	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
-app.run(debug=True,host=HOST,port=PORT)
+app.run(debug=False,host=HOST,port=PORT)
