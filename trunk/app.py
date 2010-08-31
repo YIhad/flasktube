@@ -55,10 +55,11 @@ def do_upload():
 		comid=vidid
 		file = request.files['file']
 		if 'username' in session:
-			uploader=escape(session['username'])
-			if file: #and allowed_file(file.filename):
-				filename = secure_filename(file.filename)
-				file.save(os.path.join(UPLOAD_FOLDER, str(vidid)))
+			uploader=session['username']
+           	print uploader
+           	if file: #and allowed_file(file.filename):
+					filename = secure_filename(file.filename)
+					file.save(os.path.join(UPLOAD_FOLDER, str(vidid)))
 	#f.write(datafile.file.read())
 	#f.close()
             
@@ -69,7 +70,7 @@ def do_upload():
                 f = open(STATIC_FOLDER+str(vidid)+'.html.tmp', 'r')
                 fread=f.read()
                 #freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":PORT/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username']))
-                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":"+str(PORT)+"/raw_video/"+str(vidid)+".flv").replace('uploaderuser',uploader).replace('replacecommentid',str(vidid))
+                freplaced=fread.replace('replacewithvideo',"http://"+ip_address+":"+str(PORT)+"/raw_video/"+str(vidid)+".flv").replace('uploaderuser',escape(session['username'])).replace('replacecommentid',str(vidid))
                 f.close()
                 f = open(STATIC_FOLDER+str(vidid)+'.html', 'w')
                 f.write(freplaced)
@@ -138,13 +139,32 @@ def login():
             <input type="password" name=password>
             <p><input type=submit value=Login>
         </form>
+        <br>
+        <br></br>
+        <a href="/createAccount">Don't have an account yet?</a> 
     '''
-	
+@app.route('/loginfailed', methods=['GET'])#, 'POST'])
+def loginfailed():
+    #if request.method == 'GET':
+        return '''
+        <form action="/do/login" method="post">
+            <b>Incorrect user/password.</b></br>
+            <p>
+            <p>Username</p><input type=text name=username>
+            <br>
+            <p>Password</p>
+            <input type="password" name=password>
+            <p><input type=submit value=Login>
+        </form>
+        <br></br>
+        <a href="/createAccount">Don't have an account yet?</a> 
+    '''	
 @app.route('/do/login', methods=['POST'])
 def do_login():
 	#if request.method == 'POST': Not needed because of methods=
 			session['username'] = request.form['username']
 			username = session['username']
+			print session['username']
 			password=request.form['password']
 			handle=open(DATABASE_FOLDER+'users','r')
 			for line in handle.readlines():
@@ -155,10 +175,10 @@ def do_login():
 						return redirect(url_for('upload'))
 					elif realpassword != password:
 						#return "Login failed.<br>"
-						return redirect(url_for('login'))
+						return redirect(url_for('loginfailed'))
 					else:
-						return abort(500)
-			return abort(500)
+						return redirect(url_for('loginfailed'))
+			return redirect(url_for('loginfailed'))
 	
 
 @app.route('/logout')
@@ -171,19 +191,22 @@ def logout():
 @app.route('/createAccount', methods=['GET', 'POST'])
 def createAccount():
 	if request.method == 'POST':
-		#username = session['username']
-		createUser = request.form['username']
-		createPassword = request.form['password']
-		password=request.form['password']
-		f=open(DATABASE_FOLDER+'users','a')
-		f.write(createUser+" "+createPassword+"\n")
-		f.close()
+            createUser = request.form['username']
+            createPassword = request.form['password']
+            password=request.form['password']
+            f=open(DATABASE_FOLDER+'users','a')
+            f.write(createUser+" "+createPassword+"\n")
+            f.close()
 		#return "User sucessfully added."
-		return redirect(url_for('login'))
+            session['username'] = createUser
+            return redirect(url_for('upload'))
 	#return '''
-	return '''
+        return '''
         <form action="/createAccount" method="post">
+            <p>Create an account!</p>
+            <p>Username</p>
             <p><input type=text name=username>
+            <br><p>Password</p>
             <input type="password" name=password>
             <p><input type=submit value=Login>
         </form>
@@ -209,4 +232,4 @@ def addComment():
 	f.close()
 	#return debugcomment
 app.secret_key = 'HJFHGSYUKEYTW786F7I675jkyftehyas6a7'
-app.run(debug=False,host=HOST,port=PORT)
+app.run(debug=True,host=HOST,port=PORT)
